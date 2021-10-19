@@ -1,0 +1,28 @@
+#!/bin/sh
+
+echo "generating file list ..."
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.c' -print > cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.h' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.x' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.s' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.S' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.cpp' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.hpp' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.java' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.mk' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name 'makefile' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name 'Makefile' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.v' -print >> cscope.files
+find . -path ./out -prune -o -path ./.repo -prune -o -name '*.vhd' -print >> cscope.files
+
+echo "expanding symlinks ..."
+for i in `cat cscope.files`; do readlink -f $i >> cscope.files.expanded; done
+
+echo "generating cscope database ..."
+cscope -b -C -i cscope.files.expanded
+
+echo "generating ctags database ..."
+ctags -L cscope.files.expanded
+
+echo "cleaning up ..."
+rm -f cscope.files cscope.files.expanded
